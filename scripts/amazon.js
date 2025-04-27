@@ -81,13 +81,15 @@ document.querySelectorAll(".js-add-to-cart").forEach((button) => {
                 Quantity: 1
             });
         }
-        // If the product is not already in the cart, add it
-        // cart.push({
-        //     productName: productName,
-        //     Quantity: 1
-        // });
+// calculate the total quantity of items in the cart
+        let cartQuantity = 0;
+       cart.forEach((item) => {
+        cartQuantity += item.Quantity;
+        });
 
-        console.log(cart);
-
+        //update cart quantity
+       document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
+        
     });
+    
 });
