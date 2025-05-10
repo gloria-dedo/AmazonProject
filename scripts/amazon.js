@@ -1,13 +1,15 @@
-import {cart, addTocart} from "../data/cart.js";
-import {products} from "../data/products.js";
-import {formatCurrency} from "./utils/money.js";
+import { cart, addTocart } from "../data/cart.js";
+import { products, loadProducts } from "../data/products.js";
+import { formatCurrency } from "./utils/money.js";
 
+loadProducts(renderProductsGrid);
 
-let productsHtml = "";
+function renderProductsGrid() {
+  let productsHtml = "";
 
-//loop through the products array and create a product card for each product
-products.forEach((product) => {
-    productsHtml +=  `
+  //loop through the products array and create a product card for each product
+  products.forEach((product) => {
+    productsHtml += `
        <div class="product-container">
           <div class="product-image-container">
             <img class="product-image"
@@ -47,6 +49,8 @@ products.forEach((product) => {
             </select>
           </div>
 
+          ${product.extraInfoHTML()}
+
           <div class="product-spacer"></div>
 
           <div class="added-to-cart">
@@ -54,40 +58,33 @@ products.forEach((product) => {
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary js-add-to-cart " data-product-id="${product.id}">
+          <button class="add-to-cart-button button-primary js-add-to-cart " data-product-id="${
+            product.id
+          }">
             Add to Cart
           </button>
         </div>
     `;
-    
-})
+  });
 
-
-
-
-function updateCartQuantity() {
+  function updateCartQuantity() {
     let cartQuantity = 0;
-       cart.forEach((cartItem) => {
-        cartQuantity += cartItem.Quantity;
-        });
-
-        //update cart quantity
-       document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
-
-}
-
-
-document.querySelector(".js-products-grid").innerHTML = productsHtml;
-document.querySelectorAll(".js-add-to-cart").forEach((button) => {
-    button.addEventListener('click',() =>{
-        const productId = button.dataset.productId;
-        addTocart(productId);
-        updateCartQuantity();
-
-       
-// calculate the total quantity of items in the cart
-        
-        
+    cart.forEach((cartItem) => {
+      cartQuantity += cartItem.Quantity;
     });
-    
-});
+
+    //update cart quantity
+    document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
+  }
+
+  document.querySelector(".js-products-grid").innerHTML = productsHtml;
+  document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+    button.addEventListener("click", () => {
+      const productId = button.dataset.productId;
+      addTocart(productId);
+      updateCartQuantity();
+
+      // calculate the total quantity of items in the cart
+    });
+  });
+}
