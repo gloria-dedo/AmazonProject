@@ -1,6 +1,6 @@
- import { formatCurrency } from "../scripts/utils/money.js";
- 
- export function getProduct(productId){
+import { formatCurrency } from "../scripts/utils/money.js";
+
+export function getProduct(productId) {
   let matchingProduct;
   products.forEach((product) => {
     if (product.id === productId) {
@@ -25,20 +25,17 @@ class Product {
     this.rating = productDetails.rating;
     this.priceCents = productDetails.priceCents;
     this.keywords = productDetails.keywords;
-
   }
 
   getStarsUrl() {
-   return `/images/ratings/rating-${this.rating.stars * 10}.png` ;
-
+    return `/images/ratings/rating-${this.rating.stars * 10}.png`;
   }
 
   getPrice() {
-    return `$${formatCurrency(this.priceCents)}`
-
+    return `$${formatCurrency(this.priceCents)}`;
   }
 
-  extraInfoHTML(){
+  extraInfoHTML() {
     return ``;
   }
 }
@@ -57,13 +54,10 @@ class Clothing extends Product {
       <a href= "${this.sizeChartLink}" target = "_blank" > Size Chart</a>
     `;
   }
-
 }
 
-
-
 // const product1 = new Product({
-  
+
 //     id: "15b6fc6f-327a-4ec4-896f-486349e85a3d",
 //     image: "images/products/intermediate-composite-basketball.jpg",
 //     name: "Intermediate Size Basketball",
@@ -76,36 +70,59 @@ class Clothing extends Product {
 //       "sports",
 //       "basketballs"
 //     ]
-  
+
 // })
 
 export let products = [];
 
-export function loadProducts(fun){
- const xhr = new XMLHttpRequest();
+export function loadProductsFetch() {
+  const promise = fetch("https://supersimplebackend.dev/products")
+    .then((response) => response.json())
+    .then((productsData) => {
+      products = productsData.map((productDetails) => {
+        if (productDetails.type === "clothing") {
+          return new Clothing(productDetails);
+        }
+        return new Product(productDetails);
+      });
+    })
+    .catch(() => {
+      console.log("Error loading products");
+    });
 
- xhr.addEventListener("load", () => {
- products = JSON.parse(xhr.response).map((productDetails) => {
+  return promise;
+}
+loadProductsFetch();
 
+// loadProductsFetch().then(() => {
+
+// });
+
+export function loadProducts(fun) {
+  const xhr = new XMLHttpRequest();
+
+  xhr.addEventListener("load", () => {
+    products = JSON.parse(xhr.response).map((productDetails) => {
       if (productDetails.type === "clothing") {
         return new Clothing(productDetails);
       }
-  
-  
-    return new Product(productDetails);
-  });;
 
-  console.log('loa products');
-  fun();
+      return new Product(productDetails);
+    });
 
- });
+    console.log("loa products");
+    fun();
+  });
 
+  xhr.addEventListener("error", () => {
+    console.log("Error loading products");
+  });
 
- xhr.open("GET", "https://supersimplebackend.dev/products",);
- xhr.send();
+  xhr.open("GET", "https://supersimplebackend.dev/products");
+  xhr.send();
 }
 
-
+loadProducts();
 
 // export const products = [
 //   {
@@ -772,7 +789,5 @@ export function loadProducts(fun){
 //       return new Clothing(productDetails);
 //     }
 
-
 //   return new Product(productDetails);
 // });
-
