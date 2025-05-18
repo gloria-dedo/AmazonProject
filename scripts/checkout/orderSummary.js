@@ -1,11 +1,12 @@
-import {cart, removeFromCart, updateDeliveryOption } from "../../data/cart.js";
+import { cart, removeFromCart, updateDeliveryOption,updateQuantity } from "../../data/cart.js";
 import { products, getProduct } from "../../data/products.js";
 import { formatCurrency } from "../utils/money.js";
 import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
-import { deliveryOptions, getDeliveryOption } from "../../data/deliveryOptions.js";
+import {
+  deliveryOptions,
+  getDeliveryOption,
+} from "../../data/deliveryOptions.js";
 import { renderPaymentSummary } from "./paymentSummary.js";
-
-
 
 export function renderOrderSummary() {
   //variable to store results
@@ -55,7 +56,9 @@ export function renderOrderSummary() {
                       cartItem.Quantity
                     }</span>
                   </span>
-                  <span class="update-quantity-link link-primary">
+                  <span class="update-quantity-link link-primary js-update-quantity-link" data-product-id="${
+                    matchingProduct.id
+                  }" >
                     Update
                   </span>
                   <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${
@@ -117,6 +120,28 @@ export function renderOrderSummary() {
   }
 
   document.querySelector(".js-order-summary").innerHTML = cartSummaryHtml;
+
+  document.querySelectorAll(".js-update-quantity-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      const productId = link.dataset.productId;
+
+      // Find the current cart item
+      const cartItem = cart.find((item) => item.productId === productId);
+
+      // Increase quantity by 1
+      const newQuantity = cartItem.Quantity + 1;
+
+      // Update in cart
+      updateQuantity(productId, newQuantity);
+
+      // Re-render
+      renderOrderSummary();
+      renderPaymentSummary();
+    });
+  });
+
+
+
   document.querySelectorAll(".js-delete-link").forEach((link) => {
     link.addEventListener("click", () => {
       const productId = link.dataset.productId;
@@ -140,3 +165,22 @@ export function renderOrderSummary() {
     });
   });
 }
+// document.querySelectorAll(".js-update-quantity-link").forEach((link) => {
+//   link.addEventListener("click", () => {
+//     const productId = link.dataset.productId;
+
+//     // Find the current cart item
+//     const cartItem = cart.find((item) => item.productId === productId);
+
+//     // Increase quantity by 1
+//     const newQuantity = cartItem.Quantity + 1;
+
+//     // Update in cart
+//     updateQuantity(productId, newQuantity);
+
+//     // Re-render
+//     renderOrderSummary();
+//     renderPaymentSummary();
+//   });
+// });
+

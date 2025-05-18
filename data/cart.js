@@ -64,6 +64,20 @@ export function removeFromCart(productId) {
   saveToStorage();
 }
 
+//function to update the quantity of a product in the cart
+export function updateQuantity(productId, quantity) {
+  let matchingItem;
+  cart.forEach((cartItem) => {
+    if (productId === cartItem.productId) {
+      matchingItem = cartItem;
+    }
+  });
+  matchingItem.Quantity = quantity;
+
+  saveToStorage();
+}
+
+
 export function updateDeliveryOption(productId, deliveryOptionId) {
   let matchingItem;
   cart.forEach((cartItem) => {
@@ -88,4 +102,11 @@ export function loadCart(fun) {
 
   xhr.open("GET", "https://supersimplebackend.dev/cart");
   xhr.send();
+}
+
+// Function to clear the cart after placing an order
+export function clearCart() {
+  cart = [];
+  saveToStorage();
+  updateQuantity();
 }

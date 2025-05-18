@@ -98,7 +98,7 @@ loadProductsFetch();
 
 // });
 
-export function loadProducts(fun) {
+export function loadProducts(clothingFun) {
   const xhr = new XMLHttpRequest();
 
   xhr.addEventListener("load", () => {
@@ -110,8 +110,8 @@ export function loadProducts(fun) {
       return new Product(productDetails);
     });
 
-    console.log("loa products");
-    fun();
+    console.log("load products");
+    clothingFun();
   });
 
   xhr.addEventListener("error", () => {
